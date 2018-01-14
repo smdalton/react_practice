@@ -30,6 +30,14 @@ class App extends Component {
   }
   //Event is a react provided data item
   nameChangedHandler = (event, id)=>{
+    //Write a boolean lambda that will return true when the person
+    //being analyzed has the right id as passed in above
+    //Then it will store the result in personIndex
+    //The inner anonymous function will merely trigger the index to be stored
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id
+    });
+    this.state.persons[personIndex]
     this.setState({
       persons: [
         {name: 'Max', age:28},
@@ -65,7 +73,8 @@ class App extends Component {
               name={person.name}
               age={person.age}
               key={person.id}
-              changed={() => this.nameChangedHandler()}/>
+              //this functions gets executed on the event
+              changed={(event) => this.nameChangedHandler()}/>
           })}          
       </div> 
       );
