@@ -11,26 +11,25 @@ class App extends Component {
   state = {
     //state object 
     persons: [
-      {name: 'Max', age:28},
-      {name: 'Manu', age:29},
-      {name: 'Stephanie', age: 23},
+      {id: 'adas', name: 'Max', age:28},
+      {id: 'asda',name: 'Manu', age:29},
+      {id: 'eryert', name: 'Stephanie', age: 23},
+      
     ],
     otherState: 'Some other value',
     showPersons: false,
   }
-  switchNameHandler = (newName) =>{
-    //console.log('Was Clicked')
-    // dont do this: this.state.persons[0].name = 'Shane Dalton';
-    this.setState({
-      persons: [
-        {name: newName, age:28},
-        {name: 'Manu', age:29},
-        {name: 'Stephanie', age: 27},
-      ],
-     })
+  deletePersonHandler = (personIndex) =>{
+    //This is a reference type, that is why it's const
+    const persons = [...this.state.persons];
+   //Now we access the data at the reference location and del personIndex
+    persons.splice(personIndex, 1);
+    //we save the changes
+    //now we overwrite
+    this.setState({persons: persons})
   }
-  
-  nameChangedHandler = (event)=>{
+  //Event is a react provided data item
+  nameChangedHandler = (event, id)=>{
     this.setState({
       persons: [
         {name: 'Max', age:28},
@@ -39,6 +38,7 @@ class App extends Component {
       ],
      })
   }
+  //the handler to show and hide the names on button click
   togglePersonsHandler=()=>{
     const doesShow = this.state.showPersons;
     this.setState({showPersons: !doesShow})
@@ -54,31 +54,33 @@ class App extends Component {
       cursor: 'Pointer'
     };
 
+    let persons = null;
+    if (this.state.showPersons) {
+      persons = (
+        <div>
+          {/*for person in this.state.persons map => */}
+          {this.state.persons.map((person, index) => {
+            return <Person
+              click={() => this.deletePersonHandler(index)} 
+              name={person.name}
+              age={person.age}
+              key={person.id}
+              changed={() => this.nameChangedHandler()}/>
+          })}          
+      </div> 
+      );
+    }
+
+
     return (
       <div className="App">
         <h1> Hi im a react app developers app </h1>
         <button 
         style={style}
-        onClick={this.togglePersonsHandler}>Switch Name</button>
-       { this.state.showPersons ? 
-        <div> 
-          <Person 
-            name={this.state.persons[0].name} 
-            age={this.state.persons[0].age} /> 
-          <Person 
-            name={this.state.persons[1].name} 
-            age={this.state.persons[1].age} 
-            click={this.switchNameHandler.bind(this, 'Max')} 
-            changed={this.nameChangedHandler}/> 
-          <Person 
-            name={this.state.persons[2].name} 
-            age={this.state.persons[2].age} />
-        </div> : null
-      }
+        /* set onclick prop to send an instance of toggle handler */
+        onClick={this.togglePersonsHandler}>Show/Hide Names</button>
+        {persons}
       </div>
-
-      // React.createElement('div', {className: 'App'}, React.createElement('h1',null, 'Does this work now?'
-      // ))
 
     );
   }
