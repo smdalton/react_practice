@@ -1,97 +1,107 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Person from './Person/Person';
 
-//To make a react component we make a class
-//Then we extend component
 class App extends Component {
-  //All classes need the render method
-  //All components return the html 
   state = {
-    //state object 
     persons: [
-      {id: 'adas', name: 'Max', age:28},
-      {id: 'asda',name: 'Manu', age:29},
-      {id: 'eryert', name: 'Stephanie', age: 23},
-      
+      { id: 'asfa1', name: 'Max', age: 28 },
+      { id: 'vasdf1', name: 'Manu', age: 29 },
+      { id: 'asdf11', name: 'Stephanie', age: 26 }
     ],
-    otherState: 'Some other value',
-    showPersons: false,
+    otherState: 'some other value',
+    showPersons: false
   }
-  deletePersonHandler = (personIndex) =>{
-    //This is a reference type, that is why it's const
-    const persons = [...this.state.persons];
-   //Now we access the data at the reference location and del personIndex
-    persons.splice(personIndex, 1);
-    //we save the changes
-    //now we overwrite
-    this.setState({persons: persons})
-  }
-  //Event is a react provided data item
-  nameChangedHandler = (event, id)=>{
-    //Write a boolean lambda that will return true when the person
-    //being analyzed has the right id as passed in above
-    //Then it will store the result in personIndex
-    //The inner anonymous function will merely trigger the index to be stored
+
+  nameChangedHandler = ( event, id ) => {
+    //when the name changes we need to find the value in the 
+    //persons list
     const personIndex = this.state.persons.findIndex(p => {
-      return p.id === id
+      return p.id === id;
     });
-    this.state.persons[personIndex]
-    this.setState({
-      persons: [
-        {name: 'Max', age:28},
-        {name: event.target.value, age:29},
-        {name: 'Stephanie', age:26},
-      ],
-     })
+    //we use the spread
+    const person = {
+      ...this.state.persons[personIndex]
+    };
+
+    // const person = Object.assign({}, this.state.persons[personIndex]);
+
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
+    this.setState( {persons: persons} );
   }
-  //the handler to show and hide the names on button click
-  togglePersonsHandler=()=>{
+
+  deletePersonHandler = (personIndex) => {
+    // const persons = this.state.persons.slice();
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({persons: persons});
+  }
+
+  togglePersonsHandler = () => {
     const doesShow = this.state.showPersons;
-    this.setState({showPersons: !doesShow})
+    this.setState( { showPersons: !doesShow } );
   }
-  render() {
-    //make a local version and shortcut it 
-    // const 
-    const style={
-      backGroundColor: 'white',
-      fonrt: 'inherit',
+
+  render () {
+    const style = {
+      backgroundColor: 'green',
+      font: 'inherit',
       border: '1px solid blue',
       padding: '8px',
-      cursor: 'Pointer'
+      cursor: 'pointer'
     };
 
     let persons = null;
-    if (this.state.showPersons) {
+
+    if ( this.state.showPersons ) {
       persons = (
         <div>
-          {/*for person in this.state.persons map => */}
           {this.state.persons.map((person, index) => {
             return <Person
-              click={() => this.deletePersonHandler(index)} 
-              name={person.name}
+              click={() => this.deletePersonHandler(index)}
+              name={person.name} 
               age={person.age}
               key={person.id}
-              //this functions gets executed on the event
-              changed={(event) => this.nameChangedHandler()}/>
-          })}          
-      </div> 
+              //we pass in the name change handler that waits for an event
+              //it also brings along with it the id of the specific person it 
+              //is attached to
+              changed={(event) => this.nameChangedHandler(event, person.id)} />
+          })}
+        </div>
       );
+      //we can functionally override the styling defined in 
+      //const style above if this condition is true, else it is ignored
+      style.backgroundColor = 'orange'
     }
+    
+    const classes = [];
+    //DYNAMIC CSS BELOW
+    //How to change the color of the text to which 
+    //finalClass is assigned to
+    if(this.state.persons.length <= 2){
+      classes.push('red');
 
+    }
+    if(this.state.persons.length <=1){
+      classes.push('bold')
+    }
+    const finalClass = classes.join(' ')
 
     return (
       <div className="App">
-        <h1> Hi im a react app developers app </h1>
-        <button 
-        style={style}
-        /* set onclick prop to send an instance of toggle handler */
-        onClick={this.togglePersonsHandler}>Show/Hide Names</button>
+        <h1>Hi, I'm a React App</h1>
+        <p className={finalClass}>This is really working!</p>
+        <button
+          style={style}
+          onClick={this.togglePersonsHandler}>Toggle Persons</button>
         {persons}
       </div>
-
     );
+    // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'Does this work now?'));
   }
 }
 
